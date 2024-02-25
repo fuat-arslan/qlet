@@ -253,7 +253,7 @@ button:not(:last-child) {
 
 #quiz-progress-container {
   width: 100%;
-  top: 75px;
+  top: 50px;
   background-color: #e0e0e0;
   border-radius: 5px;
   position: fixed;
