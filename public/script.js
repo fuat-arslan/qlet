@@ -26,6 +26,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Hide quiz container initially
     quizContainer.style.display = 'none';
 
+    function preloadImages(imageArray) {
+        const images = [];
+        for (let i = 0; i < imageArray.length; i++) {
+            images[i] = new Image();
+            images[i].src = imageArray[i];
+        }
+    }
+
     // Shuffle quiz data to randomize question order
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
@@ -41,12 +49,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             shuffleArray(data); // Shuffle questions
             quizData = data;
+            // Preload images
+            const imagePaths = quizData.map(q => q.ImagePath); // Assuming quizData is your array of question objects
+            preloadImages(imagePaths);
             displayQuestion();
         } catch (error) {
             console.error("Failed to fetch quiz data:", error);
         }
     };
 
+   
     // Display the current question and choices
     // Display the current question and choices with fade effect
     const displayQuestion = () => {
@@ -82,11 +94,15 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             if (currentQuestionIndex < quizData.length) {
                 const { ImagePath, AIAnswer } = quizData[currentQuestionIndex]; // Assume AIAnswer is part of your data
-                quizImage.src = ImagePath;
                 
                 // Set the question title
                 questionTitle.textContent = `Question #${currentQuestionIndex + 1} ${isFirstIteration ? '' : '- with AI'}; What is your diagnosis?`;
-
+                quizImage.onload = () => {
+                    quizContainer.classList.remove('fade-out');
+                    quizContainer.classList.add('fade-in');
+                    setTimeout(() => quizContainer.classList.remove('fade-in'), 100);
+                };
+                quizImage.src = ImagePath;
                 // Clear previous choices and update for the new question
                 optionsContainer.innerHTML = "";
                 choices.forEach((choice, index) => {
@@ -139,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 quizContainer.innerHTML = '<h2>Quiz Completed!</h2>';
             }
-        }, 1000); // This should match the duration of the fade-out animation
+        }, 100); // This should match the duration of the fade-out animation
     };
     
     const selectChoice = (button, choice) => {
