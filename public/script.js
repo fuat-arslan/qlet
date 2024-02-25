@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 quizImage.src = ImagePath;
                 
                 // Set the question title
-                questionTitle.textContent = `Question #${currentQuestionIndex + 1} ${isFirstIteration ? '' : '- with AI'}; What is this?`;
+                questionTitle.textContent = `Question #${currentQuestionIndex + 1} ${isFirstIteration ? '' : '- with AI'}; What is your diagnosis?`;
 
                 // Clear previous choices and update for the new question
                 optionsContainer.innerHTML = "";
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 quizContainer.classList.add('fade-in');
     
                 // Remove fade-in class after animation to allow it to be reapplied next time
-                setTimeout(() => quizContainer.classList.remove('fade-in'), 1000);
+                setTimeout(() => quizContainer.classList.remove('fade-in'), 100);
             } else if (isFirstIteration) {
                 // After the first iteration, shuffle questions again and start the second iteration
                 shuffleArray(quizData);

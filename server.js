@@ -27,7 +27,7 @@ function readCSV(filePath) {
 // API endpoint to get quiz data
 app.get('/api/quiz', async (req, res) => {
   try {
-    const quizData = await readCSV('data/quiz_data.csv');
+    const quizData = await readCSV('data/all_data.csv');
     res.json(quizData);
   } catch (error) {
     res.status(500).send('Error reading quiz data');
