@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 choices.forEach((choice, index) => {
                     const button = document.createElement('button');
                     button.textContent = choice;
-    
+                    button.dataset.questionId = quizData[currentQuestionIndex].idx; // Add a data attribute for question ID
                     // Assign a color class to each button based on its index
                     button.classList.add(colorClasses[index % colorClasses.length]); // Use modulo for safety
     
@@ -173,8 +173,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const selectedChoice = selectedButton.textContent;
+        const questionId = selectedButton.dataset.questionId + 1;
         handleChoiceSelection(selectedChoice, currentQuestionIndex);
-        submitAnswer(userId, currentQuestionIndex, selectedChoice, !isFirstIteration); // Submit the answer to the server
+        submitAnswer(userId, questionId, selectedChoice, !isFirstIteration); // Submit the answer to the server
     });
         
 
