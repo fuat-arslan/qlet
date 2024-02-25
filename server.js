@@ -36,20 +36,23 @@ app.get('/api/quiz', async (req, res) => {
 
 // Endpoint to submit answers
 app.post('/submit-answer', async (req, res) => {
-  const { userId, questionId, selectedOption } = req.body;
-  
+  const { userId, questionId, selectedOption, isWithAI} = req.body;
+  const timestamp = new Date().toLocaleString('en-US', { timeZone: 'Europe/Istanbul' });
   const csvWriter = createCsvWriter({
     path: 'data/answers.csv',
     append: true,
     header: [
       {id: 'userId', title: 'UserID'},
       {id: 'questionId', title: 'QuestionID'},
-      {id: 'selectedOption', title: 'SelectedOption'}
+      {id: 'selectedOption', title: 'SelectedOption'},
+      {id: 'isWithAI', title: 'isWithAI'},
+      {id: 'timestamp', title: 'Timestamp'}
     ]
+
   });
 
   try {
-    await csvWriter.writeRecords([{ userId, questionId, selectedOption }]); // Writing the answer with userId to CSV
+    await csvWriter.writeRecords([{ userId, questionId, selectedOption, isWithAI, timestamp }]); // Writing the answer with userId to CSV
     res.json({message: 'Answer saved successfully'});
   } catch (error) {
     console.error('Failed to save answer:', error);

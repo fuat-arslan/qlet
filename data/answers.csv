@@ -1,5 +1,6 @@
-0,MEL
-1,MEL
-fuat,0,VASC
-fuat,1,DF
-fuat,0,MEL
+fuat,1,DNV,
+fuat,0,DF,
+fuat,0,AK,
+f,1,DNV,false
+f,0,DNV,true,2024-02-25T17:49:08.918Z
+f,0,AK,true,"2/25/2024, 8:50:18 PM"

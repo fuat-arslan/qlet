@@ -104,22 +104,35 @@ button:not(:last-child) {
 }
 
 #options button {
-  flex-grow: 1; /* Allows buttons to grow equally */
-  min-width: 180px; /* Minimum width of buttons */
+  flex-grow: 1 0 calc(33.33% - 10px);; /* Allows buttons to grow equally */
+  min-width: 100px; /* Minimum width of buttons */
   min-height: 50px; /* Minimum height for equal height */
   padding: 10px;
   text-align: center;
   border-radius: 5px;
   cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
 }
 
+/* Media query for screens that are 600px wide or less */
+@media (max-width: 400px) {
+  #options button {
+      flex: 1 0 calc(50% - 10px);
+      padding: 8px 16px; /* Smaller padding for mobile devices */
+      font-size: 8px; /* Smaller font size for mobile devices */
+      /* Adjust other properties as needed for smaller screens */
 
+  }
+}
 
 #options button:hover {
   background-color: #007bff; /* Change color on hover */
   color: white;
   transition: background-color 0.3s ease; /* Smooth transition */
 }
+
 
 
 .ai-answer-style {
@@ -134,6 +147,7 @@ button:not(:last-child) {
   background-color: transparent; /* Initial background to transparent */
   color: inherit; /* Initial color */
   border: 2px solid transparent; /* Prepare a border that will be colored */
+  z-index: 1000; /* Ensure it's above other content */
 }
 
 
@@ -162,3 +176,109 @@ button:not(:last-child) {
   text-decoration: underline; /* Adds underline on hover for better interactivity */
 }
 
+
+#abbr-button-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+#abbr-panel {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  z-index: 100;
+  /* Additional styling for visibility and aesthetics */
+  max-height: 300px;
+  overflow-y: auto; /* In case of many abbreviations */
+}
+
+
+#fab {
+  position: fixed;
+  bottom: 100px;
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: #007BFF; /* Primary color */
+  color: white;
+  border: none;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  cursor: pointer;
+  font-size: 24px;
+  z-index: 1050; /* Ensure it's above other content */
+}
+
+#abbr-panel {
+  position: fixed;
+  left: 20px;
+  bottom: 80px; /* Adjust based on FAB size and position */
+  background-color: rgba(255, 255, 255, 0.9); /* More transparent */
+  color: black;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  display: none; /* Initially hidden */
+  z-index: 1000;
+}
+
+
+@media screen and (max-width: 600px) {
+  #fab {
+      width: 48px;
+      height: 48px;
+      font-size: 20px;
+    }
+  #abbr-panel {
+      bottom: 60px; /* Adjust for smaller screens */
+  }
+  
+}
+
+
+.selected {
+  background-color: #000000; /* Green background for selected choice */
+  color: white; /* White text color */
+  /* Add other styling as needed */
+}
+
+
+
+
+#quiz-progress-container {
+  width: 100%;
+  top: 75px;
+  background-color: #e0e0e0;
+  border-radius: 5px;
+  position: fixed;
+  margin: 20px 0;
+}
+
+#quiz-progress-bar {
+  height: 20px;
+  background-color: #4CAF50;
+  border-radius: 5px 0 0 5px; /* Smooths the left corners */
+  transition: width 0.5s ease-in-out;
+}
+
+#remaining-questions {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+}
+
+#question-title {
+  margin-bottom: 20px; /* Space between the title and the question */
+  font-size: 20px; /* Larger font size for visibility */
+  text-align: center; /* Center-align the title */
+  font-weight: bold; /* Make the title bold */
+}

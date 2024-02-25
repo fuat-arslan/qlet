@@ -4,11 +4,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const startQuizButton = document.getElementById('start-quiz-button'); // Button to start the quiz
     const quizContainer = document.getElementById('quiz-container'); // The quiz container
     const nextQuestionButton = document.getElementById('next-question');
+    
     let currentQuestionIndex = 0;
     let quizData = [];
     const choices = ["MEL", "DNV", "NV", "AK", "BCC", "VASC", "SC", "BKL", "DF"]; // Fixed choices
     let isFirstIteration = true; // Global flag to track iteration
+    let selectedButton = null; // Added to track the selected button
 
+
+    const fab = document.getElementById('fab');
+    const abbrPanel = document.getElementById('abbr-panel');
+    fab.addEventListener('click', () => {
+        if (abbrPanel.style.display === 'none' || !abbrPanel.style.display) {
+            abbrPanel.style.display = 'block';
+            fab.textContent = '−'; // Change FAB icon to indicate it can close the panel
+        } else {
+            abbrPanel.style.display = 'none';
+            fab.textContent = '+'; // Change FAB icon back to default
+        }
+    });
     // Hide quiz container initially
     quizContainer.style.display = 'none';
 
@@ -40,13 +54,28 @@ document.addEventListener('DOMContentLoaded', () => {
         const optionsContainer = document.getElementById('options');
         const quizImage = document.getElementById('quiz-image');
         const aiAnswerDisplay = document.getElementById('ai-answer-display'); // Container for AI's answer
-    
+        const questionTitle = document.getElementById('question-title'); // Get the question title element
+
         // Define color classes for choices
         const colorClasses = [
             "option-color-1", "option-color-2", "option-color-3",
             "option-color-4", "option-color-5", "option-color-6",
             "option-color-7", "option-color-8", "option-color-9"
         ];
+
+        // Update progress bar and numerical display
+        const totalQuestions = 2*quizData.length;
+        // if it is first iteration, then questionsAnswered = currentQuestionIndex + 1 else questionsAnswered = currentQuestionIndex + 1 + quizData.length
+
+        const questionsAnswered = currentQuestionIndex + 1 + (isFirstIteration ? 0 : quizData.length);
+        const progressPercentage = (questionsAnswered / totalQuestions) * 100;
+
+        const progressBar = document.getElementById('quiz-progress-bar');
+        const remainingQuestionsDisplay = document.getElementById('remaining-questions');
+
+        progressBar.style.width = `${progressPercentage}%`; // Update progress bar width
+        remainingQuestionsDisplay.textContent = `${questionsAnswered} / ${totalQuestions}`; // Update numerical display
+
     
         // Fade out current question
         quizContainer.classList.add('fade-out');
@@ -54,7 +83,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentQuestionIndex < quizData.length) {
                 const { ImagePath, AIAnswer } = quizData[currentQuestionIndex]; // Assume AIAnswer is part of your data
                 quizImage.src = ImagePath;
-    
+                
+                // Set the question title
+                questionTitle.textContent = `Question #${currentQuestionIndex + 1} ${isFirstIteration ? '' : '- with AI'}; What is this?`;
+
                 // Clear previous choices and update for the new question
                 optionsContainer.innerHTML = "";
                 choices.forEach((choice, index) => {
@@ -64,7 +96,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Assign a color class to each button based on its index
                     button.classList.add(colorClasses[index % colorClasses.length]); // Use modulo for safety
     
-                    button.onclick = () => handleChoiceSelection(choice, currentQuestionIndex, AIAnswer); // Pass AIAnswer if needed
+                    //button.onclick = () => handleChoiceSelection(choice, currentQuestionIndex, AIAnswer); // Pass AIAnswer if needed
+                    button.onclick = () => selectChoice(button, choice);
                     optionsContainer.appendChild(button);
                 });
     
@@ -84,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     aiAnswerDisplay.style.borderColor = window.getComputedStyle(document.querySelector('.' + aiAnswerColorClass)).backgroundColor; // Use the color class to set the border color
                 
                     // Move the AI's answer display below the "Next Question" button
-                    nextQuestionButton.insertAdjacentElement('afterend', aiAnswerDisplay);
+                    quizImage.insertAdjacentElement('afterend', aiAnswerDisplay);
                     aiAnswerDisplay.style.display = 'block';
                 } else {
                     aiAnswerDisplay.style.display = 'none';
@@ -109,7 +142,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1000); // This should match the duration of the fade-out animation
     };
     
+    const selectChoice = (button, choice) => {
+        if (selectedButton) {
+            selectedButton.classList.remove('selected'); // Remove selection from previously selected button
+        }
+        selectedButton = button;
+        selectedButton.classList.add('selected'); // Highlight the newly selected button
+    };
     
+    nextQuestionButton.addEventListener('click', () => {
+        if (!selectedButton) {
+            alert("Please select an answer.");
+            return;
+        }
+
+        const selectedChoice = selectedButton.textContent;
+        handleChoiceSelection(selectedChoice, currentQuestionIndex);
+        submitAnswer(userId, currentQuestionIndex, selectedChoice, !isFirstIteration); // Submit the answer to the server
+    });
+        
 
     const handleChoiceSelection = (choice, questionId) => {
         console.log(`Choice selected: ${choice}`);
@@ -143,15 +194,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     
     
-
-    // Function to submit answer to the server
-    function submitAnswer(userId, questionId, selectedOption) {
+    
+    function submitAnswer(userId, questionId, selectedOption, isWithAI) {
         fetch('/submit-answer', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ userId, questionId, selectedOption }),
+            body: JSON.stringify({ 
+                userId, 
+                questionId, 
+                selectedOption, 
+                isWithAI // Add the isWithAI information
+            }),
         })
         .then(response => response.json())
         .then(data => {
@@ -161,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error:', error);
         });
     }
-
+    
     // Event listener for the "Start Quiz" button
     startQuizButton.addEventListener('click', () => {
         userId = userIdInput.value.trim(); // Get the user ID from input
@@ -176,13 +231,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Event listener for the "Next Question" button
-    nextQuestionButton.addEventListener('click', () => {
-        currentQuestionIndex++;
-        if (currentQuestionIndex < quizData.length) {
-            displayQuestion();
+
+
+    document.getElementById('abbr-button').addEventListener('click', function() {
+        var abbrPanel = document.getElementById('abbr-panel');
+        if (abbrPanel.style.display === 'none' || abbrPanel.style.display === '') {
+            abbrPanel.style.display = 'block';
+            this.textContent = 'Hide Abbreviations'; // Change button text to indicate action
         } else {
-            quizContainer.innerHTML = '<h2>Quiz Completed!</h2>'; // Hide or modify container after completion
+            abbrPanel.style.display = 'none';
+            this.textContent = 'Show Abbreviations'; // Reset button text
         }
     });
 });
+
