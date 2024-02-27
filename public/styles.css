@@ -12,7 +12,7 @@ body {
     width: 90%;
     max-width: 600px;
 }
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 400px) {
   #quiz-container {
       margin-top: 20px;
       width: 100%; /* Adjusts the width for smaller screens */
@@ -194,7 +194,7 @@ button:not(:last-child) {
   text-decoration: underline; /* Adds underline on hover for better interactivity */
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 400px) {
   #credit {
       bottom: 10px; /* Adjust for smaller screens */
       right: 10px; /* Adjust for smaller screens */
@@ -256,7 +256,7 @@ button:not(:last-child) {
 }
 
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 400px) {
   #fab {
       width: 48px;
       height: 48px;
@@ -312,7 +312,7 @@ button:not(:last-child) {
   font-weight: bold; /* Make the title bold */
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 400px) {
   #question-title {
       margin-top: 10px; /* More space for smaller screens */
       font-size: 16px; /* Smaller font size for smaller screens */
@@ -363,7 +363,7 @@ button:not(:last-child) {
   box-sizing: border-box; /* Include padding and border in the element's total width */
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 400px) {
   #quiz-title {
       font-size: 24px; /* Larger font size for smaller screens */
       margin-top: 60px;

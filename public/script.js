@@ -115,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
             preloadImages(firstBatch, function() {
                 document.getElementById('progress-bar-container').style.display = 'none';
                 // Now the first half of the images are preloaded, you can show your quiz container
+                talisman_logo.style.display = 'none';
                 document.getElementById('quiz-container').style.display = 'block';
                 displayQuestion();
                 // Begin loading the second batch of images in the background
@@ -310,10 +311,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // Hide user ID input and show quiz container
             userIdInput.style.display = 'none';
             startQuizButton.style.display = 'none';
-            talisman_logo.style.display = 'none';
+            // talisman_logo.style.display = 'none';
             quizContainer.style.display = 'block';
 
             fetchQuizData(); // Start the quiz
+            
         } else {
             alert('Please enter a User ID.');
         }
