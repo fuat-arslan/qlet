@@ -12,8 +12,12 @@
         <span class="header-text">Hacettepe University Dermatology</span>
     </div>
     <div id="user-id-input-container">
+        <img src="/Talisman.png" alt="Talisman" class="talisman" id="talisman_logo">
         <input type="text" id="user-id-input" placeholder="Enter User ID" />
         <button id="start-quiz-button">Start Quiz</button>
+        <div id="progress-bar-container" style="width: 100%; background-color: #eee;">
+            <div id="progress-bar" style="width: 0%; height: 30px; background-color: #4CAF50;"></div>
+        </div>
     </div>
     <div id="quiz-container" style="display:none;">
         <h1 id="quiz-title">Image Quiz Game</h1>
@@ -36,10 +40,25 @@
     <p><b>DF:</b> Dermatofibroma</p>
     <p><b>BKL:</b> Benign Keratosis</p>
 </div>
+
+<div id="loadingIndicator" style="display: none;">
+    <div class="spinner"></div>
+    Loading...
+</div>
+
+  
 <div id="quiz-progress-container">
     <div id="quiz-progress-bar" style="width: 0%;"></div>
     <div id="remaining-questions">0 / 0</div>
 </div>
 <script src="script.js"></script>
+<script>
+    window.onbeforeunload = function(event) {
+        const message = 'Are you sure you want to leave? All progress will be lost.';
+        event.preventDefault();
+        event.returnValue = message;
+        return message;
+    };
+</script>
 </body>
 </html>

@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let currentQuestionIndex = 0;
     let quizData = [];
-    const choices = ["MEL", "DNV", "NV", "AK", "BCC", "VASC", "SC", "BKL", "DF"]; // Fixed choices
+    const choices = ["MEL", "DNV", "NV", "AK", "BCC", "VASC", "SCC", "BKL", "DF"]; // Fixed choices
     let isFirstIteration = true; // Global flag to track iteration
     let selectedButton = null; // Added to track the selected button
 
@@ -26,13 +26,44 @@ document.addEventListener('DOMContentLoaded', () => {
     // Hide quiz container initially
     quizContainer.style.display = 'none';
 
-    function preloadImages(imageArray) {
-        const images = [];
-        for (let i = 0; i < imageArray.length; i++) {
-            images[i] = new Image();
-            images[i].src = imageArray[i];
+   
+    function showLoadingIndicator() {
+        document.getElementById('loadingIndicator').style.display = 'block';
+    }
+    
+    function hideLoadingIndicator() {
+        document.getElementById('loadingIndicator').style.display = 'none';
+    }
+    // Preload images
+    function preloadImages(imageArray, callback, startQuizAfterLoading) {
+        let imagesLoaded = 0;
+        const totalImages = imageArray.length;
+        const progressBar = document.getElementById('progress-bar');
+        const updateProgressBar = () => {
+            const percentage = (imagesLoaded / totalImages) * 100;
+            progressBar.style.width = percentage + '%';
+        };
+    
+        for (let i = 0; i < totalImages; i++) {
+            const img = new Image();
+            img.onload = () => {
+                imagesLoaded++;
+                updateProgressBar(); // Update progress bar on each image load
+                if (imagesLoaded === totalImages) {
+                    if (startQuizAfterLoading) {
+                        callback();
+                    }
+                }
+            };
+            img.src = imageArray[i];
+        }
+    
+        if (!startQuizAfterLoading) {
+            // Immediately call the callback if we're not waiting to start the quiz
+            callback();
         }
     }
+    
 
     // Shuffle quiz data to randomize question order
     function shuffleArray(array) {
@@ -43,22 +74,58 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Fetch quiz data from the server
+    // const fetchQuizData = async () => {
+    //     try {
+    //         const response = await fetch('/api/quiz');
+    //         const data = await response.json();
+    //         shuffleArray(data); // Shuffle questions
+    //         quizData = data;
+    //         // Preload images
+    //         const imagePaths = quizData.map(q => q.ImagePath); // Assuming quizData is your array of question objects
+    //         // Start loading images and wait to start the game
+    //         showLoadingIndicator();
+    //         preloadImages(imagesToLoad, function() {
+    //             hideLoadingIndicator();
+    //             // Now all images are preloaded, you can show your quiz container
+    //             document.getElementById('quiz-container').style.display = 'block';
+    //         });
+    //         displayQuestion();
+    //     } catch (error) {
+    //         console.error("Failed to fetch quiz data:", error);
+    //     }
+    // };
+
+    // Fetch quiz data and manage image preloading
     const fetchQuizData = async () => {
         try {
             const response = await fetch('/api/quiz');
             const data = await response.json();
             shuffleArray(data); // Shuffle questions
             quizData = data;
-            // Preload images
-            const imagePaths = quizData.map(q => q.ImagePath); // Assuming quizData is your array of question objects
-            preloadImages(imagePaths);
-            displayQuestion();
+            // Assuming quizData is your array of question objects and each has an ImagePath property
+            const imagePaths = quizData.map(q => q.ImagePath);
+
+            // Split the imagePaths into two arrays
+            const halfwayPoint = Math.ceil(imagePaths.length / 2);
+            const firstBatch = imagePaths.slice(0, halfwayPoint);
+            const secondBatch = imagePaths.slice(halfwayPoint);
+
+            // Start loading the first batch of images
+            document.getElementById('progress-bar-container').style.display = 'block';
+            preloadImages(firstBatch, function() {
+                document.getElementById('progress-bar-container').style.display = 'none';
+                // Now the first half of the images are preloaded, you can show your quiz container
+                document.getElementById('quiz-container').style.display = 'block';
+                displayQuestion();
+                // Begin loading the second batch of images in the background
+                preloadImages(secondBatch, function() {
+                    console.log("All images loaded.");
+                }, false);
+            }, true);
         } catch (error) {
             console.error("Failed to fetch quiz data:", error);
         }
     };
-
-   
     // Display the current question and choices
     // Display the current question and choices with fade effect
     const displayQuestion = () => {
@@ -100,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 quizImage.onload = () => {
                     quizContainer.classList.remove('fade-out');
                     quizContainer.classList.add('fade-in');
-                    setTimeout(() => quizContainer.classList.remove('fade-in'), 100);
+                    setTimeout(() => quizContainer.classList.remove('fade-in'), 1000);
                 };
                 quizImage.src = ImagePath;
                 // Clear previous choices and update for the new question
@@ -108,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 choices.forEach((choice, index) => {
                     const button = document.createElement('button');
                     button.textContent = choice;
-                    button.dataset.questionId = quizData[currentQuestionIndex].idx; // Add a data attribute for question ID
+                    button.dataset.questionId = quizData[currentQuestionIndex].id; // Add a data attribute for question ID
                     // Assign a color class to each button based on its index
                     button.classList.add(colorClasses[index % colorClasses.length]); // Use modulo for safety
     
@@ -145,7 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 quizContainer.classList.add('fade-in');
     
                 // Remove fade-in class after animation to allow it to be reapplied next time
-                setTimeout(() => quizContainer.classList.remove('fade-in'), 100);
+                setTimeout(() => quizContainer.classList.remove('fade-in'), 1000);
             } else if (isFirstIteration) {
                 // After the first iteration, shuffle questions again and start the second iteration
                 shuffleArray(quizData);
@@ -173,9 +240,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const selectedChoice = selectedButton.textContent;
-        const questionId = selectedButton.dataset.questionId + 1;
+        const questionId = quizData[currentQuestionIndex].id;
         handleChoiceSelection(selectedChoice, currentQuestionIndex);
         submitAnswer(userId, questionId, selectedChoice, !isFirstIteration); // Submit the answer to the server
+        selectedButton.classList.remove('selected'); // Remove selection from the button
+        selectedButton = null; // Reset the selected button
     });
         
 
@@ -241,7 +310,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Hide user ID input and show quiz container
             userIdInput.style.display = 'none';
             startQuizButton.style.display = 'none';
+            talisman_logo.style.display = 'none';
             quizContainer.style.display = 'block';
+
             fetchQuizData(); // Start the quiz
         } else {
             alert('Please enter a User ID.');

@@ -28,7 +28,12 @@ from PIL import Image
 # img_paths = [f'public/images/{i}' for i in os.listdir('public/images') if i.endswith('.png')]
 # df['ImagePath'] = img_paths
 
-df = pd.read_csv('data/all_data.csv')
-# add ImagePath column all datas images/
-df['ImagePath'] = 'images/' + df['ImagePath']
-df.to_csv('data/all_data.csv', index=False)
+# df = pd.read_csv('data/all_data.csv')
+# # add ImagePath column all datas images/
+# df['ImagePath'] = 'images/' + df['ImagePath']
+# df.to_csv('data/all_data.csv', index=False)
+
+df = pd.read_csv('data/ensemble_preds.csv')
+# move idx to first column
+df = df.set_index('idx')
+df.to_csv('data/ensemble_preds.csv')
