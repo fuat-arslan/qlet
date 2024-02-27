@@ -257,11 +257,14 @@ button:not(:last-child) {
 }
 
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 1500px) {
   #fab {
       width: 48px;
       height: 48px;
       font-size: 20px;
+      /* put it on left bottom */
+      left: 20px;
+      bottom: 20px;
     }
   #abbr-panel {
       bottom: 60px; /* Adjust for smaller screens */
