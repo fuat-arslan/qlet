@@ -139,7 +139,8 @@ button:not(:last-child) {
       flex: 1 0 calc(50% - 10px);
       padding: 8px 16px; /* Smaller padding for mobile devices */
       font-size: 8px; /* Smaller font size for mobile devices */
-      min-width: 80px; /* Smaller minimum width for mobile devices */
+      /* Smaller minimum width for mobile devices dynamically*/
+      min-width: calc(50% - 10px);
       /* Adjust other properties as needed for smaller screens */
 
   }

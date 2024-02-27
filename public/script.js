@@ -312,8 +312,8 @@ document.addEventListener('DOMContentLoaded', () => {
             userIdInput.style.display = 'none';
             startQuizButton.style.display = 'none';
             // talisman_logo.style.display = 'none';
-            quizContainer.style.display = 'block';
-
+            
+            quizContainer.style.display = 'none';
             fetchQuizData(); // Start the quiz
             
         } else {
