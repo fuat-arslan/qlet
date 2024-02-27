@@ -134,7 +134,7 @@ button:not(:last-child) {
 }
 
 /* Media query for screens that are 600px wide or less */
-@media (max-width: 400px) {
+@media (max-width: 900px) {
   #options button {
       flex: 1 0 calc(50% - 10px);
       padding: 8px 16px; /* Smaller padding for mobile devices */
