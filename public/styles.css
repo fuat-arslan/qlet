@@ -12,9 +12,9 @@ body {
     width: 90%;
     max-width: 600px;
 }
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 1500px) {
   #quiz-container {
-      margin-top: 20px;
+      margin-top: 40px;
       width: 100%; /* Adjusts the width for smaller screens */
   }
   
@@ -168,6 +168,7 @@ button:not(:last-child) {
   border: 2px solid transparent; /* Prepare a border that will be colored */
   z-index: 1000; /* Ensure it's above other content */
 }
+
 
 
 
