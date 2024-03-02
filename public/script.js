@@ -252,17 +252,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleChoiceSelection = (choice, questionId) => {
         console.log(`Choice selected: ${choice}`);
 
-        if (!isFirstIteration) {
-            // In the second iteration, reveal the correct answer after selection
-            const correctAnswer = quizData[questionId].CorrectAnswer;
-            setTimeout(() => {
-                alert(`You chose: ${choice}. The correct answer is: ${correctAnswer}.`);
-                moveToNextQuestion();
-            }, 500); // Short delay to let the user see the AI's answer before alert
-        } else {
-            // Move directly to the next question in the first iteration
-            moveToNextQuestion();
-        }
+        // if (!isFirstIteration) {
+        //     // In the second iteration, reveal the correct answer after selection
+        //     const correctAnswer = quizData[questionId].CorrectAnswer;
+        //     setTimeout(() => {
+        //         alert(`You chose: ${choice}. The correct answer is: ${correctAnswer}.`);
+        //         moveToNextQuestion();
+        //     }, 500); // Short delay to let the user see the AI's answer before alert
+        // } else {
+        //     // Move directly to the next question in the first iteration
+        //     moveToNextQuestion();
+        // }
+        moveToNextQuestion();
     };
 
     const moveToNextQuestion = () => {
